@@ -1,0 +1,41 @@
+﻿Invoice number,Invoice date,Visit date,Visit Diagnosis,Visit treatment code,Visit treatment description,Visit treatment units,Visit treatment line total,Patient Name,Patient Address,Patient Phone,Patient Fax,Patient email,Patient Insurance,Physician Name,Physician Specialty
+1111,12/1/21,12/2/21,Glaucoma,TR1234,Pupil dilation,10 ml,100.00,Joseph Doe,"456 Main Street, Brooklyn, NY, 11231",718-555-3434,718-555-1212,jdoe@yahoo.com,Blue Cross,John Smith,Ophtalmology
+,,,,TR7235,Right Eye pressure,17 units,100.00, , , , , , , , 
+,,,,TR1456,Left Eye pressure,15 units,100.00, , , , , , , , 
+,,,,TR2222,Iris treatment,10 ml,100.00, , , , , , , , 
+1112,12/2/21,12/3/21,Pneumonia,TR2272,Breathing test,20 cc,100.00,Peter Jones,"238  South Street, Brooklyn, NY, 11231",718-555-3466,718-555-3312,pjones@gmail.com,United Health,Phil Silver,Pneumonology
+, , , ,TR2273,Lung sampling,15 ml,100.00, , , , , , , , 
+, , , ,TR2274,Biopsy,1 slide,100.00, , , , , , , , 
+1113,12/3/21,12/4/21,Pneumonia,TR2272,Breathing test,20 cc,100.00,Rob Guzman,"250  North Street, Brooklyn, NY, 11231",718-555-3461,718-555-3317,rguzman@hotmail.com,Cigna,Phil Silver,Pneumonology
+1114,12/4/21,12/2/21,Sinusitis,TR7888,Nasal Swab,17 units,100.00,Joseph Doe,"456 Main Street, Brooklyn, NY, 11231",718-555-3434,718-555-1212,jdoe@yahoo.com,Blue Cross,Myra Rae,General Medicine
+, , , ,TR1457,Nasal rinse,15 units,100.00, , , , , , , , 
+1115,12/2/21,12/2/21,Glaucoma,TR1234,Pupil dilation,10 ml,100.00,Josephine Miller,"188 Main Street, Brooklyn, NY, 11231",718-555-3434,718-555-1214,jdoe@yahoo.com,Blue Cross,John Smith,Ophtalmology
+, , , ,TR7235,Right Eye pressure,17 units,100.00, , , , , , , , 
+, , , ,TR1456,Left Eye pressure,15 units,100.00, , , , , , , , 
+, , , ,TR2222,Iris treatment,10 ml,100.00, , , , , , , , 
+1116,12/5/21,12/3/21,Pneumonia,TR2272,Breathing test,20 cc,100.00,Laura Jones,"238  South Street, Brooklyn, NY, 11231",718-555-3438,718-555-1218,pjones@gmail.com,United Health,Phil Silver,Pneumonology
+, , , ,TR2273,Lung sampling,15 ml,100.00, , , , , , , , 
+, , , ,TR2274,Biopsy,1 slide,100.00, , , , , , , , 
+1117,12/8/21,12/4/21,Pneumonia,TR2272,Breathing test,20 cc,100.00,Susan Guzman,"250  North Street, Brooklyn, NY, 11231",718-555-3441,718-555-1221,rguzman@hotmail.com,Cigna,Phil Silver,Pneumonology
+1118,12/9/21,12/5/21,Sinusitis,TR7888,Nasal Swab,17 units,100.00,Jonah Whale,"470 Main Street, Brooklyn, NY, 11231",718-555-3442,718-555-1222,jdoe@yahoo.com,Blue Cross,Myra Rae,General Medicine
+, ,12/6/21, ,TR1457,Nasal rinse,15 units,100.00, , , , , , , , 
+1119,12/3/21,12/7/21,Glaucoma,TR1234,Pupil dilation,10 ml,100.00,Norah Jones,"156 Main Street, Brooklyn, NY, 11231",718-555-3444,718-555-1224,jdoe@yahoo.com,Blue Cross,John Smith,Ophtalmology
+, , , ,TR7235,Right Eye pressure,17 units,100.00, , , , , , , , 
+, , , ,TR1456,Left Eye pressure,15 units,100.00, , , , , , , , 
+, , , ,TR2222,Iris treatment,10 ml,100.00, , , , , , , , 
+1120,12/7/21,12/11/21,Pneumonia,TR2272,Breathing test,20 cc,100.00,Peter Jones,"238  South Street, Brooklyn, NY, 11231",718-555-3448,718-555-1228,pjones@gmail.com,United Health,Phil Silver,Pneumonology
+, , , ,TR2273,Lung sampling,15 ml,100.00, , ,  , , , , , 
+, , , ,TR2274,Biopsy,1 slide,100.00, , , , , , , , 
+1121,12/10/21,12/14/21,Pneumonia,TR2272,Breathing test,20 cc,100.00,Rob Guzman,"250  North Street, Brooklyn, NY, 11231",718-555-3451,718-555-1231,rguzman@hotmail.com,Cigna,Phil Silver,Pneumonology
+1122,12/11/21,12/15/21,Sinusitis,TR7888,Nasal Swab,17 units,100.00,Joseph Doe,"456 Main Street, Brooklyn, NY, 11231",718-555-3452,718-555-1232,jdoe@yahoo.com,Blue Cross,Myra Rae,General Medicine
+ , , , ,TR1457,Nasal rinse,15 units,100.00, , , , , , , , 
+1123,12/13/21,12/17/21,Glaucoma,TR1234,Pupil dilation,10 ml,100.00,Cindy Ella,"166 Main Street, Brooklyn, NY, 11231",718-555-3454,718-555-1234,jdoe@yahoo.com,Blue Cross,John Smith,Ophtalmology
+ , , , ,TR7235,Right Eye pressure,17 units,100.00, , , , , , , , 
+ , , , ,TR1456,Left Eye pressure,15 units,100.00, , , , , , , , 
+ , , , ,TR2222,Iris treatment,10 ml,100.00, , , , , , , , 
+1124,12/17/21,12/21/21,Pneumonia,TR2272,Breathing test,20 cc,100.00,Peter Sellers,"238  South Street, Brooklyn, NY, 11231",718-555-3458,718-555-1238,pjones@gmail.com,United Health,Phil Silver,Pneumonology
+ , , , ,TR2273,Lung sampling,15 ml,100.00, , , , , , , , 
+ , , , ,TR2274,Biopsy,1 slide,100.00, , , , , , , , 
+1125,12/20/21,12/24/21,Pneumonia,TR2272,Breathing test,20 cc,100.00,Charles Chan,"251 North Street, Brooklyn, NY, 11231",718-555-3461,718-555-1241,rguzman@hotmail.com,Cigna,Phil Silver,Pneumonology
+1126,12/21/21,12/24/21,Sinusitis,TR7888,Nasal Swab,17 units,100.00,Michael Maus,"856 Main Street, Brooklyn, NY, 11231",718-555-3462,718-555-1242,jdoe@yahoo.com,Blue Cross,Myra Rae,General Medicine
+ , , , ,TR1457,Nasal rinse,15 units,100.00, , ,,, , , , 

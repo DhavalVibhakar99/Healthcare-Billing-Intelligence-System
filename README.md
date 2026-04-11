@@ -66,20 +66,22 @@ and returns results with visualizations.
 ---
 
 ## Project Structure
- healthcare-billing-intelligence/
- ├── data/
- │   └── cms_medicare_data.csv
- ├── sql/
- │   ├── billing_analysis.sql
- │   ├── anomaly_detection.sql
- │   ├── provider_benchmarking.sql
- │   └── geographic_variance.sql
- ├── app/
- │   ├── text_to_sql.py
- │   └── dashboard.py
- ├── notebooks/
- │   └── exploratory_analysis.ipynb
- └── README.md
+```
+healthcare-billing-intelligence/
+├── data/
+│   └── cms_medicare_data.csv
+├── sql/
+│   ├── billing_analysis.sql
+│   ├── anomaly_detection.sql
+│   ├── provider_benchmarking.sql
+│   └── geographic_variance.sql
+├── app/
+│   ├── text_to_sql.py
+│   └── dashboard.py
+├── notebooks/
+│   └── exploratory_analysis.ipynb
+└── README.md
+```
 ---
 
 ## Key Questions This Project Answers

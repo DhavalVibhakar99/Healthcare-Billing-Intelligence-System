@@ -59,7 +59,7 @@ and returns results with visualizations.
 ## Tech Stack
 - **Database:** SQLite
 - **Analytics:** Python, Pandas, SQL
-- **AI Layer:** OpenAI API (Text-to-SQL)
+- **AI Layer:** llama-3.3-70b-versatile (Text-to-SQL)
 - **Dashboard:** Streamlit
 - **Deployment:** Streamlit Cloud
 

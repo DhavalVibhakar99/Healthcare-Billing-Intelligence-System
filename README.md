@@ -10,7 +10,7 @@ billing data in plain English.
 
 ## Project Status
 🔨 **Completely developed** — SQL analytics layer complete, 
-AI query interface Completed, Dahboard with AI interface built.
+AI query interface Completed, Dashboard with AI interface built.
 
 ---
 

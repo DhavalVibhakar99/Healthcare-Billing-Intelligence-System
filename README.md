@@ -9,7 +9,7 @@ billing data in plain English.
 ---
 
 ## Project Status
-🔨 **In active development** — SQL analytics layer complete, 
+🔨 **Completely developed** — SQL analytics layer complete, 
 AI query interface in progress
 
 ---

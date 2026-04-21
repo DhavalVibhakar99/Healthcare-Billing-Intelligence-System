@@ -2,4 +2,5 @@ streamlit==1.50.0
 plotly==5.18.0
 pandas==2.3.3
 openai==1.30.0
+httpx==0.27.0
 python-dotenv==1.2.1

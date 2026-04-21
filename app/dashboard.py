@@ -428,7 +428,7 @@ with col_links:
             👤 Dhaval Vibhakar
         </a><br>
         <span style='color:#8b8fa8; font-size:12px;'>
-            Python · Streamlit · Plotly · SQLite · Groq AI
+            Python · Streamlit · Plotly · SQLite · OpenRouter Gemma AI
         </span>
     </div>
     """, unsafe_allow_html=True)

@@ -9,8 +9,7 @@ billing data in plain English.
 ---
 
 ## Project Status
-🔨 **In active development** — SQL analytics layer complete, 
-AI query interface in progress
+✅ **Complete** — ETL pipeline, SQL analytics, AI query interface, and Streamlit dashboard all built and deployed.
 
 ---
 
@@ -59,7 +58,7 @@ and returns results with visualizations.
 ## Tech Stack
 - **Database:** SQLite
 - **Analytics:** Python, Pandas, SQL
-- **AI Layer:** OpenAI API (Text-to-SQL)
+- **AI Layer:** OpenRouter (Gemma 3, Text-to-SQL)
 - **Dashboard:** Streamlit
 - **Deployment:** Streamlit Cloud
 

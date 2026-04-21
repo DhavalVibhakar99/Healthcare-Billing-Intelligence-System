@@ -315,7 +315,7 @@ def ai_chat_dialog():
             with st.expander("Generated SQL", expanded=False):
                 st.code(latest["sql"], language="sql")
             if latest["results"] is not None and len(latest["results"]) > 0:
-                st.dataframe(latest["results"], width='stretch')
+                st.dataframe(latest["results"], use_container_width=True)
                 download_button(latest["results"], "ai_query_results.csv")
                 num_cols = latest["results"].select_dtypes(include="number").columns.tolist()
                 txt_cols = latest["results"].select_dtypes(include="object").columns.tolist()
@@ -335,7 +335,7 @@ def ai_chat_dialog():
                         font_color="white",
                         coloraxis_showscale=False,
                     )
-                    st.plotly_chart(fig, width='stretch')
+                    st.plotly_chart(fig, use_container_width=True)
             else:
                 st.warning("No results found.")
 
@@ -657,7 +657,7 @@ with right_col:
         coloraxis_showscale=False,
         yaxis={'categoryorder': 'total ascending'}
     )
-    st.plotly_chart(fig, width='stretch')
+    st.plotly_chart(fig, use_container_width=True)
     st.caption("Source: CMS Medicare Physician & Other Practitioners 2023")
 
 st.markdown("<hr class='custom-divider'>", unsafe_allow_html=True)
@@ -702,7 +702,7 @@ with col1:
         coloraxis_showscale=False,
         yaxis={'categoryorder': 'total ascending'}
     )
-    st.plotly_chart(fig, width='stretch')
+    st.plotly_chart(fig, use_container_width=True)
 
 with col2:
     fig2 = px.bar(
@@ -723,7 +723,7 @@ with col2:
         font_color='white',
         xaxis_tickangle=45
     )
-    st.plotly_chart(fig2, width='stretch')
+    st.plotly_chart(fig2, use_container_width=True)
 
 st.caption("Source: CMS Medicare Physician & Other Practitioners 2023")
 download_button(spec_df, "specialty_analysis.csv")
@@ -768,7 +768,7 @@ with col1:
         font_color='white',
         geo=dict(bgcolor='rgba(0,0,0,0)')
     )
-    st.plotly_chart(fig, width='stretch')
+    st.plotly_chart(fig, use_container_width=True)
 
 with col2:
     fig2 = px.bar(
@@ -788,7 +788,7 @@ with col2:
         coloraxis_showscale=False,
         yaxis={'categoryorder': 'total ascending'}
     )
-    st.plotly_chart(fig2, width='stretch')
+    st.plotly_chart(fig2, use_container_width=True)
 
 st.caption("Source: CMS Medicare Physician & Other Practitioners 2023")
 download_button(state_df, "geographic_analysis.csv")
@@ -804,6 +804,12 @@ st.markdown("<div class='section-header'>🔬 Anomaly Detection</div>",
 filter_clause = build_filter()
 where_clause = filter_clause if filter_clause else ""
 and_clause = filter_clause.replace("WHERE", "AND") if filter_clause else ""
+
+# Qualify unambiguous column refs for the joined anomaly query
+anomaly_where = (
+    where_clause.replace("specialty", "m.specialty").replace("state", "m.state")
+    if where_clause else ""
+)
 
 anomaly_df = run_query(f"""
     WITH stats AS (
@@ -823,44 +829,47 @@ anomaly_df = run_query(f"""
                  NULLIF(SQRT(s.var), 0), 2) as z_score
     FROM medicare_billing m
     JOIN stats s ON m.specialty = s.specialty
-    {where_clause}
+    {anomaly_where}
     GROUP BY m.provider_name, m.specialty, m.state
     HAVING z_score > 2
     ORDER BY z_score DESC
     LIMIT 15
 """)
 
-col1, col2 = st.columns([1.2, 1])
+if anomaly_df.empty or 'provider_name' not in anomaly_df.columns:
+    st.info("No anomalies found for the current filter selection.")
+else:
+    col1, col2 = st.columns([1.2, 1])
 
-with col1:
-    fig = px.bar(
-        anomaly_df,
-        x='z_score',
-        y=anomaly_df['provider_name'] + ' (' + anomaly_df['specialty'] + ')',
-        orientation='h',
-        color='z_score',
-        color_continuous_scale='Reds',
-        title='Top 15 Statistical Outliers',
-        labels={'x': 'Z-Score', 'y': ''}
-    )
-    fig.update_layout(
-        height=500,
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font_color='white',
-        coloraxis_showscale=False,
-        yaxis={'categoryorder': 'total ascending'}
-    )
-    st.plotly_chart(fig, width='stretch')
+    with col1:
+        fig = px.bar(
+            anomaly_df,
+            x='z_score',
+            y=anomaly_df['provider_name'] + ' (' + anomaly_df['specialty'] + ')',
+            orientation='h',
+            color='z_score',
+            color_continuous_scale='Reds',
+            title='Top 15 Statistical Outliers',
+            labels={'x': 'Z-Score', 'y': ''}
+        )
+        fig.update_layout(
+            height=500,
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font_color='white',
+            coloraxis_showscale=False,
+            yaxis={'categoryorder': 'total ascending'}
+        )
+        st.plotly_chart(fig, use_container_width=True)
 
-with col2:
-    st.markdown("**Outlier Details**")
-    st.dataframe(
-        anomaly_df[['provider_name', 'specialty',
-                    'state', 'avg_charge', 'z_score']],
-        width='stretch',
-        height=460
-    )
+    with col2:
+        st.markdown("**Outlier Details**")
+        st.dataframe(
+            anomaly_df[['provider_name', 'specialty',
+                        'state', 'avg_charge', 'z_score']],
+            use_container_width=True,
+            height=460
+        )
 
 st.caption("Source: CMS Medicare Physician & Other Practitioners 2023")
 download_button(anomaly_df, "anomaly_detection.csv")
@@ -901,7 +910,7 @@ if st.session_state.chat_history:
         with st.expander(f"Full results & SQL — Query #{query_num}"):
             st.code(item["sql"], language="sql")
             if row_count > 0:
-                st.dataframe(item["results"], width='stretch')
+                st.dataframe(item["results"], use_container_width=True)
                 download_button(
                     item["results"],
                     f"query_{query_num}_results.csv",

@@ -8,5 +8,4 @@ __pycache__/
 .env
 venv/
 .history/
-echo "!data/cms_medicare_deploy.db"
-echo ".streamlit/secrets.toml"
+.streamlit/secrets.toml

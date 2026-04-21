@@ -571,7 +571,7 @@ with right_col:
             SELECT COUNT(DISTINCT m.provider_id) as n
             FROM medicare_billing m
             JOIN stats s ON m.specialty = s.specialty
-            {filter_clause}
+            {filter_clause.replace('state', 'm.state').replace('specialty', 'm.specialty') if filter_clause else ''}
             AND (m.avg_submitted_charge - s.mean) /
                 NULLIF(SQRT(s.var),0) > 2
         """)

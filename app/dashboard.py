@@ -6,9 +6,10 @@ import plotly.io as pio
 pio.renderers.default = "browser"
 import plotly.graph_objects as go
 import os
+import re
 import time
 from pathlib import Path
-from groq import Groq, RateLimitError
+from openai import OpenAI
 from dotenv import load_dotenv
 import warnings
 
@@ -123,8 +124,13 @@ def get_connection():
     return sqlite3.connect(DB_PATH, check_same_thread=False)
 
 @st.cache_resource
-def get_groq_client():
-    return Groq(api_key=os.getenv("GROQ_API_KEY"))
+def get_client():
+    api_key = st.secrets.get("OPENROUTER_API_KEY",
+                              os.getenv("OPENROUTER_API_KEY"))
+    return OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=api_key
+    )
 
 
 # ── SESSION STATE ─────────────────────────────────────────
@@ -201,8 +207,8 @@ Context about the data:
 - Key findings include Ellenberger (NP billing for surgery), 
   Phoenix Eye (wrong procedures), Johnson (upcoding)
 """
-    message = get_groq_client().chat.completions.create(
-        model="llama-3.3-70b-versatile",
+    message = get_client().chat.completions.create(
+        model="google/gemma-3-4b-it:free",
         max_tokens=300,
         messages=[{"role": "user", "content": prompt}]
     )
@@ -276,22 +282,26 @@ def ai_chat_dialog():
                             f'Convert this question to SQL: "{question}"\n'
                             "Return ONLY the SQL query, no explanations, no backticks."
                         )
-                        message = get_groq_client().chat.completions.create(
-                            model="llama-3.3-70b-versatile",
+                        message = get_client().chat.completions.create(
+                            model="google/gemma-3-4b-it:free",
                             max_tokens=500,
                             messages=[{"role": "user", "content": prompt}],
                         )
-                        sql = message.choices[0].message.content.strip().rstrip(";")
+                        sql = message.choices[0].message.content.strip()
+                        sql = re.sub(r'```.*?\n', '', sql)
+                        sql = re.sub(r'```', '', sql)
+                        sql = sql.strip().rstrip(";")
                         results = pd.read_sql_query(sql, get_connection())
                         st.session_state.chat_history.append(
                             {"question": question, "sql": sql, "results": results}
                         )
                     st.session_state.query_count += 1
                     st.session_state["_clear_dialog_q"] = True
-                except RateLimitError:
-                    st.error("Rate limit hit. Wait 30 seconds and try again.")
                 except Exception as e:
-                    st.error(f"SQL error: {e}")
+                    if "rate" in str(e).lower():
+                        st.error("Rate limit hit. Please wait 30 seconds.")
+                    else:
+                        st.error(f"Error: {e}")
 
     if st.session_state.chat_history:
         latest = st.session_state.chat_history[-1]

@@ -9,7 +9,7 @@ billing data in plain English.
 ---
 
 ## Project Status
-✅ **Complete** — ETL pipeline, SQL analytics, AI query interface, and Streamlit dashboard all built and deployed.
+✅ **Complete** — ETL pipeline, SQL analytics, AI query interface, and Streamlit dashboard all built and deployed | [Healthcare Billing Intelligence](https://healthcare-billing-intelligence-system.streamlit.app) | Healthcare | Python, SQL, Streamlit, AI | ✅ Live |
 
 ---
 

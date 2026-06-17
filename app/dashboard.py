@@ -12,8 +12,54 @@ from pathlib import Path
 from openai import OpenAI
 from dotenv import load_dotenv
 import warnings
+from openai import APIStatusError
 
 warnings.filterwarnings("ignore")
+
+# ── MODEL FALLBACK LIST ───────────────────────────────────
+
+@st.cache_data(ttl=3600)  # refresh every hour
+def get_available_models():
+    """Fetch currently available free models from OpenRouter"""
+    try:
+        import requests
+        response = requests.get("https://openrouter.ai/api/v1/models")
+        models = response.json()['data']
+        free_models = [
+            m['id'] for m in models 
+            if m.get('pricing', {}).get('prompt') == '0'
+            and 'free' in m['id']
+        ]
+        return free_models[:5]  # top 5 free models
+    except:
+        return FALLBACK_MODELS  # fallback to hardcoded list
+    # If the first model is unavailable (404) or rate-limited, the next one is tried.
+FALLBACK_MODELS = [
+    "google/gemma-4-31b-it:free",      # fastest - 0.8s
+    "nex-agi/nex-n2-pro:free",         # backup - 1.1s
+    "openai/gpt-oss-120b:free",        # backup - 1.6s
+]
+
+def chat_with_fallback(client, messages, max_tokens=500):
+    """Try each model in FALLBACK_MODELS until one succeeds."""
+    last_error = None
+    for model in FALLBACK_MODELS:
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                max_tokens=max_tokens,
+                messages=messages,
+            )
+            return response
+        except APIStatusError as e:
+            last_error = e
+            if e.status_code == 404:
+                continue   # model unavailable, try next
+            if e.status_code == 429:
+                time.sleep(2)
+                continue   # rate limit, wait and try next
+            raise          # unexpected error, surface it
+    raise last_error       # all models exhausted
 
 # ── CONFIG ────────────────────────────────────────────────
 ROOT_DIR = Path(__file__).parent.parent
@@ -183,6 +229,19 @@ def run_query(sql):
         st.error(f"Query error: {e}")
         return pd.DataFrame()
 
+def extract_sql(text):
+    """Robustly pull just the SQL out of a model response."""
+    # 1. Pull from a fenced code block (```sql ... ``` or ``` ... ```)
+    match = re.search(r'```(?:sql|sqlite)?\s*\n?(.*?)```', text, re.DOTALL | re.IGNORECASE)
+    if match:
+        return match.group(1).strip().rstrip(";")
+    # 2. Find the first SELECT or WITH keyword and take everything from there
+    match = re.search(r'((?:WITH|SELECT)\b.*)', text, re.DOTALL | re.IGNORECASE)
+    if match:
+        return match.group(1).strip().rstrip(";")
+    # 3. Fallback: return cleaned text
+    return text.strip().rstrip(";")
+
 def is_conversational(question):
     conversational_keywords = [
         'what is this', 'what does this', 'explain', 
@@ -209,10 +268,10 @@ Context about the data:
 - Key findings include Ellenberger (NP billing for surgery), 
   Phoenix Eye (wrong procedures), Johnson (upcoding)
 """
-    message = get_client().chat.completions.create(
-        model="google/gemma-3-4b-it:free",
+    message = chat_with_fallback(
+        get_client(),
+        messages=[{"role": "user", "content": prompt}],
         max_tokens=300,
-        messages=[{"role": "user", "content": prompt}]
     )
     return message.choices[0].message.content.strip()
 
@@ -235,8 +294,7 @@ def ai_chat_dialog():
         "Show me providers in New Jersey with average charge above 10000",
         "What procedures does provider with last name Ellenberger bill for?",
         "Which states have the most Medicare providers?",
-        "Show me nurse practitioners billing more than 5000 on average",
-    ]
+        "Show me nurse practitioners with the highest average charges"    ]
     ex_cols = st.columns(2)
     for i, ex in enumerate(examples):
         with ex_cols[i % 2]:
@@ -284,16 +342,23 @@ def ai_chat_dialog():
                             f'Convert this question to SQL: "{question}"\n'
                             "Return ONLY the SQL query, no explanations, no backticks."
                         )
-                        message = get_client().chat.completions.create(
-                            model="google/gemma-3-4b-it:free",
-                            max_tokens=500,
+                        message = chat_with_fallback(
+                            get_client(),
                             messages=[{"role": "user", "content": prompt}],
+                            max_tokens=500,
                         )
-                        sql = message.choices[0].message.content.strip()
-                        sql = re.sub(r'```.*?\n', '', sql)
-                        sql = re.sub(r'```', '', sql)
-                        sql = sql.strip().rstrip(";")
-                        results = pd.read_sql_query(sql, get_connection())
+                        content = message.choices[0].message.content
+                        if content is None:
+                            st.error("AI returned empty response. Please try again.")
+                            return
+                        raw = content.strip()
+                        sql = extract_sql(raw)
+                        try:
+                            results = pd.read_sql_query(sql, get_connection())
+                        except Exception as sql_err:
+                            st.error(f"SQL error: {sql_err}")
+                            st.code(sql, language="sql")
+                            results = pd.DataFrame()
                         st.session_state.chat_history.append(
                             {"question": question, "sql": sql, "results": results}
                         )
@@ -389,7 +454,7 @@ CMS Medicare Part B
 
 **Tech Stack**
 Python · Pandas · SQLite
-Streamlit · Plotly · Groq Llama AI
+Streamlit · Plotly · OpenRouter AI
 """)
     st.markdown("---")
     st.markdown("**📊 Quick Stats**")
@@ -893,7 +958,7 @@ if st.session_state.chat_history:
     )
     for idx, item in enumerate(reversed(st.session_state.chat_history)):
         query_num = len(st.session_state.chat_history) - idx
-        row_count = len(item["results"])
+        row_count = len(item["results"]) if item.get("results") is not None else 0
         st.markdown(
             f"<div class='chat-user'>{item['question']}</div>",
             unsafe_allow_html=True,
@@ -909,7 +974,7 @@ if st.session_state.chat_history:
         )
         with st.expander(f"Full results & SQL — Query #{query_num}"):
             st.code(item["sql"], language="sql")
-            if row_count > 0:
+            if row_count > 0 and item.get("results") is not None:
                 st.dataframe(item["results"], use_container_width=True)
                 download_button(
                     item["results"],
